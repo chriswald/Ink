@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="title0">رسم</string>
+    <string name="title1">إعدادات</string>
+    <string name="picker_text">هذا سيكون لاقط اللون.</string>
+    <string name="save_text">حفظ</string>
+    <string name="load_text">حمولة</string>
+</resources>

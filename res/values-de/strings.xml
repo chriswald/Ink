@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="title0">Zeichnen</string>
+    <string name="title1">Einstellungen</string>
+    <string name="picker_text">Dies wird die Farbauswahl sein.</string>
+    <string name="save_text">Speichern</string>
+    <string name="load_text">Last</string>
+</resources>

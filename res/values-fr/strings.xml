@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="title0">Tirage</string>
+    <string name="title1">Paramètres</string>
+    <string name="picker_text">Ce sera le sélecteur de couleur.</string>
+    <string name="save_text">Enregistrer</string>
+    <string name="load_text">Charge</string>
+</resources>

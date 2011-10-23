@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Ink</string>
+    <string name="title0">Draw</string>
+    <string name="title1">Settings</string>
+    <string name="picker_text">This will be the color picker.</string>
+    <string name="save_text">Save</string>
+    <string name="load_text">Load</string>
+</resources>
