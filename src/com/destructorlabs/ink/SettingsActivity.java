@@ -53,23 +53,36 @@
  */
 package com.destructorlabs.ink;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.ObjectOutputStream;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Scanner;
 import java.util.Vector;
 
-import android.app.Activity;
+import android.app.ListActivity;
 import android.content.Context;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.TextView;
+import android.widget.ListView;
 
+import com.destructorlabs.companion.Point;
+import com.destructorlabs.pkg.Corner;
 import com.destructorlabs.pkg.Shape;
+import com.destructorlabs.pkg.Shape.ShapeType;
 
-public class SettingsActivity extends Activity{
-	Vector<String> files = new Vector<String>();
+public class SettingsActivity extends ListActivity{
+
+	private enum InputType{TYPE, CENTER, CORNERS, NONE};
+	InputType type = InputType.NONE;
+	private List<String> item = null;
+	private final String root = "/data/data/com.destructorlabs.ink/files/";
+
 
 	/** Called when the activity is first created. */
 	@Override
@@ -78,43 +91,126 @@ public class SettingsActivity extends Activity{
 		super.setContentView(R.layout.settings);
 
 		Button button = (Button) this.findViewById(R.id.save_button);
-		final EditText edit = (EditText) this.findViewById(R.id.save_text);
-		final TextView tv = (TextView) this.findViewById(R.id.load_text);
-
 		button.setOnClickListener(new View.OnClickListener() {
 			public void onClick(final View v) {
-				if (!edit.getText().toString().equals("")) {
-					FileOutputStream fos;
-					ObjectOutputStream oos;
-
-					try {
-						fos = SettingsActivity.this.openFileOutput(edit.getText().toString(), Context.MODE_PRIVATE);
-						oos = new ObjectOutputStream(fos);
-
-					} catch (Exception e) {
-						tv.setText("-Could not create file-\n" + e.toString());
-						return;
-					}
-
-					try {
-						Vector<Shape> shapes = DrawView.getShapesForSave();
-						for (Shape s : shapes) {
-							oos.writeObject(s);
-						}
-						oos.close();
-
-					} catch (NullPointerException e) {
-						tv.setText(e.toString());
-						return;
-					} catch (IOException e) {
-						tv.setText(e.toString());
-						return;
-					} catch (Exception e) {
-						tv.setText(e.toString());
-						return;
-					}
-				}
+				SettingsActivity.this.onButtonClick();
+				SettingsActivity.this.getDir(SettingsActivity.this.root);
 			}
 		});
+
+		this.getDir(this.root);
+	}
+
+
+	@Override
+	protected void onListItemClick(ListView l, View v, int position, long id) {
+		this.loadFromFile(this.root + this.item.get(position) + ".ink");
+	}
+
+
+	private void onButtonClick(){
+		final EditText edit = (EditText) this.findViewById(R.id.save_text);
+
+		if (!edit.getText().toString().equals("")) {
+			String filename = edit.getText().toString();
+			FileOutputStream fos;
+
+			try{
+				fos = SettingsActivity.this.openFileOutput(filename + ".ink", Context.MODE_PRIVATE);
+				Vector<Shape> shapes = DrawView.getShapesForSave();
+				for (Shape s : shapes){
+					fos.write(s.toString().getBytes());
+				}
+				fos.close();
+				edit.setText("");
+			} catch (IOException e){}
+		}
+	}
+
+
+	private void getDir(String dirPath){
+		this.item = new ArrayList<String>();
+
+		File f = new File(dirPath);
+		File[] files = f.listFiles();
+
+		if (files == null)
+			return;
+
+		for(int i=0; i < files.length; i++)	{
+			File file = files[i];
+
+			if (!file.isDirectory() && file.getName().endsWith(".ink")){
+				String name = file.getName();
+				name = name.substring(0, name.length() - 4);
+				this.item.add(name);
+			}
+
+		}
+
+		ArrayAdapter<String> fileList =	new ArrayAdapter<String>(this, R.layout.row, this.item);
+		this.setListAdapter(fileList);
+	}
+
+
+	private void loadFromFile(String filename){
+		if (!filename.endsWith(".ink"))
+			filename += ".ink";
+
+		Vector<Shape> shapes = new Vector<Shape>();
+
+		boolean first_shape = true;
+		String line = "";
+		FileInputStream fis;
+
+		ShapeType st = null;
+		Corner c = null;
+		Vector<Corner> cs = new Vector<Corner>();
+
+		try {
+			fis = new FileInputStream(filename);
+			Scanner scan = new Scanner(fis);
+
+			DrawView.getShapesForSave().removeAllElements();
+
+			while (scan.hasNext()){
+				line = scan.nextLine();
+
+				if (line.startsWith("@SHAPE")){
+					if (!first_shape)
+						shapes.add(Shape.makeShapeFromSave(st, c, cs));
+					first_shape = false;
+				} else if (line.startsWith("#SHAPETYPE")){
+					this.type = InputType.TYPE;
+				} else if (line.startsWith("#CENTER")){
+					this.type = InputType.CENTER;
+				} else if (line.startsWith("#CORNERS")){
+					this.type = InputType.CORNERS;
+				} else {
+					switch (this.type){
+						case TYPE:
+							st = (line.contains("CIRCLE") ? ShapeType.CIRCLE : ShapeType.POLYGON);
+							break;
+						case CENTER:
+							String[] tokens = line.split(" ");
+							c = new Corner(new Point(Integer.parseInt(tokens[0]), Integer.parseInt(tokens[1])), Shape.DEFAULT_RADIUS);
+							break;
+						case CORNERS:
+							String[] tokens1 = line.split(" ");
+							cs.add(new Corner(new Point(Integer.parseInt(tokens1[0]), Integer.parseInt(tokens1[1])), Shape.DEFAULT_RADIUS));
+							break;
+						default:
+							break;
+					}
+				}
+
+			}
+
+			if (st != null  &&  c != null)
+				shapes.add(Shape.makeShapeFromSave(st, c, cs));
+
+			DrawView.addShapes(shapes);
+
+		} catch (IOException e){}
 	}
 }

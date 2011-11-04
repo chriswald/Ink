@@ -73,6 +73,11 @@ public class Corner implements Serializable{
 	private int		radius;
 	private boolean	selected	= false;
 
+	@Override
+	public String toString(){
+		return this.location.toString();
+	}
+
 	public Corner(final Point p, final int r) {
 		this.location = p;
 		this.radius = r;

@@ -6,6 +6,11 @@ public class Point implements Serializable{
 	private static final long serialVersionUID = -1338550134922245737L;
 	public int x=0 ,y=0;
 
+	@Override
+	public String toString(){
+		return this.x + " " + this.y;
+	}
+
 	public Point(final int x, final int y) {
 		this.x=x;
 		this.y=y;

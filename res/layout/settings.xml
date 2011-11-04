@@ -35,10 +35,9 @@
         android:layout_height="wrap_content"
         android:text="@string/load_text" />
 
-    <ListView
-        android:id="@+id/file_list"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content" >
-    </ListView>
+	<ListView
+		android:id="@android:id/list"
+		android:layout_width="fill_parent" 
+		android:layout_height="wrap_content" />
 	
 </LinearLayout>

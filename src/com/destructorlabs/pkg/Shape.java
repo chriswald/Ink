@@ -14,11 +14,47 @@ public class Shape implements Serializable{
 	private Vector<Corner>	corners			= new Vector<Corner>();
 	private ShapeType		type			= null;
 	private Corner			center			= null;
-	private final int		DEFAULT_RADIUS	= 10;
+	public static final int	DEFAULT_RADIUS	= 10;
 
-	public enum ShapeType{CIRCLE, POLYGON};
+	public enum ShapeType{
+		CIRCLE,
+		POLYGON;
+
+		@Override
+		public String toString(){
+			return (this.ordinal() == 0 ? "CIRCLE" : "POLYGON");
+		}
+
+	};
 
 	public Shape() {}
+
+	private Shape(ShapeType st, Corner c, Vector<Corner> cs){
+		this.type = st;
+		this.center = c;
+		this.corners = cs;
+	}
+
+	public static Shape makeShapeFromSave(ShapeType st, Corner c, Vector<Corner> cs){
+		return new Shape(st, c, cs);
+	}
+
+	@Override
+	public String toString(){
+		String string = "@SHAPE\n";
+		string += "#SHAPETYPE\n";
+		string += this.type.toString();
+		string += "\n";
+		string += "#CENTER\n";
+		string += this.center.toString();
+		string += "\n";
+		string += "#CORNERS\n";
+		for (Corner c : this.corners){
+			string += c.toString() + "\n";
+		}
+
+		return string;
+	}
 
 	public void addCorner(final Corner c) {
 		this.corners.add(c);
@@ -45,7 +81,7 @@ public class Shape implements Serializable{
 			for (Corner corner : this.corners)
 				corner.draw(c, p);
 		} else {
-			Point point = new Point(this.corners.get(1).getY() + this.center.getX(), this.center.getY());
+			Point point = new Point(this.center.getX(), this.center.getY());
 			Corner handle = new Corner(point, 20);
 			handle.draw(c, p);
 		}
@@ -107,7 +143,10 @@ public class Shape implements Serializable{
 	}
 
 	private void findCenter() {
-		this.center = new Corner(new Point(this.findMidX(), this.findMidY()), this.DEFAULT_RADIUS);
+		if (this.type == ShapeType.CIRCLE)
+			this.center = new Corner(this.corners.get(0).getX(), this.corners.get(0).getY(), Shape.DEFAULT_RADIUS);
+		else
+			this.center = new Corner(new Point(this.findMidX(), this.findMidY()), Shape.DEFAULT_RADIUS);
 	}
 
 	private int findMidX() {

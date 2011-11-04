@@ -17,7 +17,8 @@ import android.view.View;
 import com.destructorlabs.companion.Point;
 import com.destructorlabs.pkg.Corner;
 import com.destructorlabs.pkg.Shape;
-import com.destructorlabs.shape.ShapeRegression;
+import com.destructorlabs.pkg.Shape.ShapeType;
+import com.destructorlabs.shape.ShapeFit;
 
 public class DrawView extends View {
 	public static class PointerState {
@@ -42,7 +43,7 @@ public class DrawView extends View {
 	private final Paint paint;
 	private final Paint pathPaint;
 	private final Paint cornerPaint;
-	private final PointerState pointer = new PointerState();
+	private static final PointerState pointer = new PointerState();
 	private static Vector<Shape> shapes_list = new Vector<Shape>();
 
 	public DrawView(final Context context) {
@@ -63,7 +64,7 @@ public class DrawView extends View {
 		this.cornerPaint.setStyle(Style.STROKE);
 		this.cornerPaint.setStrokeWidth(2);
 
-		this.pointer.velocity = VelocityTracker.obtain();
+		DrawView.pointer.velocity = VelocityTracker.obtain();
 
 		this.setBackgroundColor(Color.WHITE);
 	}
@@ -86,13 +87,12 @@ public class DrawView extends View {
 		this.cornerPaint.setStyle(Style.STROKE);
 		this.cornerPaint.setStrokeWidth(2);
 
-		this.pointer.velocity = VelocityTracker.obtain();
+		DrawView.pointer.velocity = VelocityTracker.obtain();
 
 		this.setBackgroundColor(Color.WHITE);
 	}
 
-	public DrawView(final Context context, final AttributeSet attrs,
-			final int defStyle) {
+	public DrawView(final Context context, final AttributeSet attrs, final int defStyle) {
 		super(context, attrs, defStyle);
 		this.setFocusable(true);
 		this.paint = new Paint();
@@ -110,7 +110,7 @@ public class DrawView extends View {
 		this.cornerPaint.setStyle(Style.STROKE);
 		this.cornerPaint.setStrokeWidth(2);
 
-		this.pointer.velocity = VelocityTracker.obtain();
+		DrawView.pointer.velocity = VelocityTracker.obtain();
 
 		this.setBackgroundColor(Color.WHITE);
 	}
@@ -119,43 +119,49 @@ public class DrawView extends View {
 		return new Vector<Shape>(DrawView.shapes_list);
 	}
 
+	public static void addShapes(Vector<Shape> shapes){
+		DrawView.shapes_list = new Vector<Shape>(shapes);
+		DrawView.pointer.dots.removeAllElements();
+	}
+
 	@Override
 	protected void onDraw(final Canvas canvas) {
-		if (this.pointer.press_type == PointerState.Type.DRAW)
-			for (int i = 0; i < this.pointer.size() - 1; i++) {
-				canvas.drawLine(this.pointer.get(i).x, this.pointer.get(i).y,
-						this.pointer.get(i + 1).x, this.pointer.get(i + 1).y,
+		if (DrawView.pointer.press_type == PointerState.Type.DRAW)
+			for (int i = 0; i < DrawView.pointer.size() - 1; i++) {
+				canvas.drawLine(DrawView.pointer.get(i).x, DrawView.pointer.get(i).y,
+						DrawView.pointer.get(i + 1).x, DrawView.pointer.get(i + 1).y,
 						this.pathPaint);
-				canvas.drawPoint(this.pointer.get(i).x, this.pointer.get(i).y,
+				canvas.drawPoint(DrawView.pointer.get(i).x, DrawView.pointer.get(i).y,
 						this.paint);
 			}
 
 		// Draw all stored shapes
-		for (Shape s : shapes_list)
+		for (Shape s : shapes_list){
 			s.drawShape(canvas, this.paint);
+		}
 
-				try {
-					Shape last = shapes_list.lastElement();
-					// if (last.getType() != ShapeType.CIRCLE)
-					this.drawHandles(last, canvas, this.cornerPaint);
-				} catch (Exception e) {}
+		try {
+			Shape last = shapes_list.lastElement();
+			if (last.getType() != ShapeType.CIRCLE)
+				this.drawHandles(last, canvas, this.cornerPaint);
+		} catch (Exception e) {}
 	}
 
 	private void drawHandles(final Shape shape, final Canvas canvas,
 			final Paint paint) {
 		if (shape.getType() == Shape.ShapeType.POLYGON)
-			for (Corner corner : shape.getCorners())
+			for (Corner corner : shape.getCorners()) {
 				this.drawSingleHandle(corner, canvas, paint);
-					else {
-						Point point = new Point(shape.getCorners().get(1).getY()
-								+ shape.getCenter().getX(), shape.getCenter().getY());
-						Corner handle = new Corner(point, 20);
-						this.drawSingleHandle(handle, canvas, paint);
-					}
+			}
+		else {
+			Point point = new Point(shape.getCorners().get(1).getY()
+					+ shape.getCenter().getX(), shape.getCenter().getY());
+			Corner handle = new Corner(point, 20);
+			this.drawSingleHandle(handle, canvas, paint);
+		}
 	}
 
-	private void drawSingleHandle(final Corner c, final Canvas canvas,
-			final Paint paint) {
+	private void drawSingleHandle(final Corner c, final Canvas canvas, final Paint paint) {
 		try {
 			Bitmap handle = BitmapFactory.decodeResource(this.getResources(),
 					R.drawable.handle);
@@ -169,49 +175,50 @@ public class DrawView extends View {
 	}
 
 	private void addTouchEvent(final MotionEvent event) {
-		synchronized (this.pointer) {
+		synchronized (DrawView.pointer) {
 			int action = event.getAction();
 
 			if (action == MotionEvent.ACTION_DOWN) {
 				Corner c = this.overAnyCorners(event);
 				if (c == null)
-					this.pointer.press_type = PointerState.Type.DRAW;
+					DrawView.pointer.press_type = PointerState.Type.DRAW;
 				else {
-					this.pointer.press_type = PointerState.Type.MOVE;
-					this.pointer.setCorner(c);
+					DrawView.pointer.press_type = PointerState.Type.MOVE;
+					DrawView.pointer.setCorner(c);
 				}
 
-				this.pointer.dots.clear();
-				this.pointer.velocity = VelocityTracker.obtain();
-				this.pointer.curDown = true;
+				DrawView.pointer.dots.clear();
+				DrawView.pointer.velocity = VelocityTracker.obtain();
+				DrawView.pointer.curDown = true;
 			}
 
 			if ((action & MotionEvent.ACTION_MASK) == MotionEvent.ACTION_POINTER_DOWN) {
-				this.pointer.velocity = VelocityTracker.obtain();
-				this.pointer.curDown = true;
+				DrawView.pointer.velocity = VelocityTracker.obtain();
+				DrawView.pointer.curDown = true;
 			}
 
-			this.pointer.velocity.addMovement(event);
-			this.pointer.velocity.computeCurrentVelocity(1);
-			this.pointer.dots.add(new Point(event.getX(), event.getY()));
+			DrawView.pointer.velocity.addMovement(event);
+			DrawView.pointer.velocity.computeCurrentVelocity(1);
+			DrawView.pointer.dots.add(new Point(event.getX(), event.getY()));
 
 			if ((action & MotionEvent.ACTION_MASK) == MotionEvent.ACTION_POINTER_UP)
-				this.pointer.curDown = false;
+				DrawView.pointer.curDown = false;
 
 			if (action == MotionEvent.ACTION_UP)
-				this.pointer.curDown = false;
+				DrawView.pointer.curDown = false;
 		}
 
 		this.postInvalidate();
 	}
 
-	@SuppressWarnings("static-access")
 	private Corner overAnyCorners(final MotionEvent event) {
-		for (Shape s : this.shapes_list)
-			for (Corner c : s.getCorners())
+		for (Shape s : DrawView.shapes_list) {
+			for (Corner c : s.getCorners()) {
 				if (this.overCorner(event, c))
 					return c;
-					return null;
+			}
+		}
+		return null;
 	}
 
 	private boolean overCorner(final MotionEvent event, final Corner c) {
@@ -227,33 +234,33 @@ public class DrawView extends View {
 		return false;
 	}
 
-	@SuppressWarnings("static-access")
 	private void doRegression() {
-		ShapeRegression SR = new ShapeRegression();
-		SR.addPointsList(this.pointer.getDots());
+		ShapeFit SR = new ShapeFit();
+		SR.addPointsList(DrawView.pointer.getDots());
 		Vector<Point> points = SR.runRegression();
 
 		if (points == null)
 			return;
 
 		Shape shape = new Shape();
-		for (Point p : points)
+		for (Point p : points) {
 			shape.addCorner(new Corner(p, 10));
+		}
 
-				// If the user is done drawing add the most
-				// recent shape to the list
-				if (!this.pointer.curDown)
-					this.shapes_list.add(shape);
+		// If the user is done drawing add the most
+		// recent shape to the list
+		if (!DrawView.pointer.curDown)
+			DrawView.shapes_list.add(shape);
 	}
 
 	@Override
 	public boolean onTouchEvent(final MotionEvent event) {
 		this.addTouchEvent(event);
 
-		if (this.pointer.press_type == PointerState.Type.DRAW)
+		if (DrawView.pointer.press_type == PointerState.Type.DRAW)
 			this.doRegression();
 		else
-			this.pointer.corner.move(this.pointer.getLast());
+			DrawView.pointer.corner.move(DrawView.pointer.getLast());
 
 		return true;
 	}
