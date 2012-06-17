@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="title0">Llamar</string>
-    <string name="title1">Ajustes</string>
+    <string name="title0">Dibujar</string>
+    <string name="title1">Opciónes</string>
     <string name="picker_text">Este será el selector de color.</string>
-    <string name="save_text">Salvar</string>
-    <string name="load_text">Abrir</string>
+    <string name="save_text">Guardar</string>
+    <string name="load_text">Encargar</string>
 </resources>

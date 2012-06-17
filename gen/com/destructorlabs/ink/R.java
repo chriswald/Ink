@@ -15,28 +15,36 @@ public final class R {
         public static final int icon=0x7f020001;
     }
     public static final class id {
-        public static final int draw_view=0x7f050000;
-        public static final int linearLayout1=0x7f050002;
-        public static final int linearLayout2=0x7f050006;
-        public static final int linearLayout3=0x7f050007;
-        public static final int linearLayout4=0x7f050009;
-        public static final int load_text=0x7f05000a;
-        public static final int load_textview=0x7f050005;
-        public static final int picker_textview=0x7f050008;
-        public static final int rowtext=0x7f050001;
-        public static final int save_button=0x7f050004;
-        public static final int save_text=0x7f050003;
+        public static final int dialog_text=0x7f050000;
+        public static final int draw_view=0x7f050002;
+        public static final int linearLayout1=0x7f050004;
+        public static final int linearLayout2=0x7f050008;
+        public static final int linearLayout3=0x7f050009;
+        public static final int linearLayout4=0x7f05000b;
+        public static final int load_text=0x7f05000c;
+        public static final int load_textview=0x7f050007;
+        public static final int ok_button=0x7f050001;
+        public static final int picker_textview=0x7f05000a;
+        public static final int rowtext=0x7f050003;
+        public static final int save_button=0x7f050006;
+        public static final int save_text=0x7f050005;
     }
     public static final class layout {
-        public static final int drawing=0x7f030000;
-        public static final int main=0x7f030001;
-        public static final int row=0x7f030002;
-        public static final int settings=0x7f030003;
+        public static final int dialog=0x7f030000;
+        public static final int drawing=0x7f030001;
+        public static final int main=0x7f030002;
+        public static final int row=0x7f030003;
+        public static final int settings=0x7f030004;
     }
     public static final class string {
         public static final int app_name=0x7f040000;
+        public static final int confirm_button=0x7f04000a;
+        public static final int load_dialog_text=0x7f040009;
+        public static final int load_dialog_title=0x7f040008;
         public static final int load_text=0x7f040005;
         public static final int picker_text=0x7f040003;
+        public static final int save_dialog_text=0x7f040007;
+        public static final int save_dialog_title=0x7f040006;
         public static final int save_text=0x7f040004;
         public static final int title0=0x7f040001;
         public static final int title1=0x7f040002;

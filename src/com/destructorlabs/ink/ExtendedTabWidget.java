@@ -18,7 +18,7 @@
  *
  *         ->Ink
  *         ->Developed By Christopher J. Wald
- *         ->Copyright *Year* (c) All Rights Reserved
+ *         ->Copyright 2011 (c) All Rights Reserved
  *
  *
  * @author  	Christopher J. Wald

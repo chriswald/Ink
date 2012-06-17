@@ -6,4 +6,9 @@
     <string name="picker_text">This will be the color picker.</string>
     <string name="save_text">Save</string>
     <string name="load_text">Load</string>
+    <string name="save_dialog_title"> Drawing Saved</string>
+    <string name="save_dialog_text">Your drawing was successfully saved.</string>
+    <string name="load_dialog_title"> Drawing Loaded</string>
+    <string name="load_dialog_text">Switch to the Draw tab to see your drawing</string>
+    <string name="confirm_button">Ok</string>
 </resources>

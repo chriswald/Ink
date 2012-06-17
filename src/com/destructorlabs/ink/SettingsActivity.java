@@ -54,46 +54,33 @@
 package com.destructorlabs.ink;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Scanner;
-import java.util.Vector;
 
 import android.app.ListActivity;
-import android.content.Context;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.EditText;
-import android.widget.ListView;
-
-import com.destructorlabs.companion.Point;
-import com.destructorlabs.pkg.Corner;
-import com.destructorlabs.pkg.Shape;
-import com.destructorlabs.pkg.Shape.ShapeType;
 
 public class SettingsActivity extends ListActivity{
 
 	private enum InputType{TYPE, CENTER, CORNERS, NONE};
 	InputType type = InputType.NONE;
 	private List<String> item = null;
-	private final String root = "/data/data/com.destructorlabs.ink/files/";
-
+	private String root;
 
 	/** Called when the activity is first created. */
 	@Override
 	public void onCreate(final Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		super.setContentView(R.layout.settings);
+		this.root = this.getFilesDir() + "/";
 
 		Button button = (Button) this.findViewById(R.id.save_button);
 		button.setOnClickListener(new View.OnClickListener() {
 			public void onClick(final View v) {
-				SettingsActivity.this.onButtonClick();
+				//SettingsActivity.this.onButtonClick();
 				SettingsActivity.this.getDir(SettingsActivity.this.root);
 			}
 		});
@@ -102,13 +89,13 @@ public class SettingsActivity extends ListActivity{
 	}
 
 
-	@Override
+	/*@Override
 	protected void onListItemClick(ListView l, View v, int position, long id) {
 		this.loadFromFile(this.root + this.item.get(position) + ".ink");
-	}
+	}*/
 
 
-	private void onButtonClick(){
+	/*private void onButtonClick(){
 		final EditText edit = (EditText) this.findViewById(R.id.save_text);
 
 		if (!edit.getText().toString().equals("")) {
@@ -123,10 +110,10 @@ public class SettingsActivity extends ListActivity{
 				}
 				fos.close();
 				edit.setText("");
+
 			} catch (IOException e){}
 		}
-	}
-
+	}*/
 
 	private void getDir(String dirPath){
 		this.item = new ArrayList<String>();
@@ -153,7 +140,7 @@ public class SettingsActivity extends ListActivity{
 	}
 
 
-	private void loadFromFile(String filename){
+	/*private void loadFromFile(String filename){
 		if (!filename.endsWith(".ink"))
 			filename += ".ink";
 
@@ -176,15 +163,15 @@ public class SettingsActivity extends ListActivity{
 			while (scan.hasNext()){
 				line = scan.nextLine();
 
-				if (line.startsWith("@SHAPE")){
+				if (line.startsWith("@SHAPE")) {
 					if (!first_shape)
 						shapes.add(Shape.makeShapeFromSave(st, c, cs));
 					first_shape = false;
-				} else if (line.startsWith("#SHAPETYPE")){
+				} else if (line.startsWith("#SHAPETYPE")) {
 					this.type = InputType.TYPE;
-				} else if (line.startsWith("#CENTER")){
+				} else if (line.startsWith("#CENTER")) {
 					this.type = InputType.CENTER;
-				} else if (line.startsWith("#CORNERS")){
+				} else if (line.startsWith("#CORNERS")) {
 					this.type = InputType.CORNERS;
 				} else {
 					switch (this.type){
@@ -203,7 +190,6 @@ public class SettingsActivity extends ListActivity{
 							break;
 					}
 				}
-
 			}
 
 			if (st != null  &&  c != null)
@@ -212,5 +198,5 @@ public class SettingsActivity extends ListActivity{
 			DrawView.addShapes(shapes);
 
 		} catch (IOException e){}
-	}
+	}*/
 }

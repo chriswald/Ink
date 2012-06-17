@@ -56,59 +56,34 @@ package com.destructorlabs.pkg;
 
 import java.io.Serializable;
 
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Canvas;
-import android.graphics.Paint;
+import android.graphics.Color;
 import android.view.MotionEvent;
-import android.view.View;
 
 import com.destructorlabs.companion.Point;
-import com.destructorlabs.ink.R;
 
 public class Corner implements Serializable{
 
 	private static final long serialVersionUID = 2776959186746125338L;
 	private Point	location;
-	private int		radius;
-	private boolean	selected	= false;
+	private static final int RADIUS = 30;
+	private boolean	selected = false;
+	public int color = Color.BLACK;
 
 	@Override
 	public String toString(){
 		return this.location.toString();
 	}
 
-	public Corner(final Point p, final int r) {
+	public Corner(final Point p) {
 		this.location = p;
-		this.radius = r;
 	}
 
-	public Corner(final int x, final int y, final int r) {
+	public Corner(final int x, final int y) {
 		this.location = new Point(x, y);
-		this.radius = r;
 	}
 
-	public Corner(final float x, final float y, final int r) {
+	public Corner(final float x, final float y) {
 		this.location = new Point((int) x, (int) y);
-		this.radius = r;
-	}
-
-	public void setRadius(final int radius) {
-		this.radius=radius;
-	}
-
-	public int getRadius() {
-		return this.radius;
-	}
-
-	public void draw(final Canvas c, final Paint p) {
-		try {
-			Bitmap handle = BitmapFactory.decodeResource(new View(null).getResources(), R.drawable.handle);
-			c.drawBitmap(handle, this.getX(), this.getY(), null);
-		} catch (Exception e) {
-			c.drawCircle(this.getX(), this.getY(), this.getRadius(), p);
-		}
-		//c.drawCircle(this.location.x, this.location.y, this.radius, p);
 	}
 
 	public boolean isOver(final MotionEvent e) {
@@ -122,19 +97,12 @@ public class Corner implements Serializable{
 	}
 
 	public boolean isOver(final int x, final int y) {
-		int r = this.location.x + this.radius;	//Right bound
-		int l = this.location.x - this.radius;	//Left bound
-		int t = this.location.y - this.radius;	//Top bound
-		int b = this.location.y + this.radius;	//Bottom bound
+		int xx = this.getLocation().x;
+		int yy = this.getLocation().y;
 
-		if ((l < x) && (x < r) && (b < y) && (y < t))
-			return true;
-		else
-			return false;
-	}
+		double distance = Math.sqrt(Math.pow(xx - x, 2) + Math.pow(yy - y, 2));
 
-	public void drawControls() {
-
+		return (distance < RADIUS);
 	}
 
 	public boolean toggleSelected() {

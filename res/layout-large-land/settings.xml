@@ -38,7 +38,7 @@
             android:id="@+id/linearLayout3"
             android:layout_width="wrap_content"
             android:layout_height="fill_parent"
-            android:layout_weight="0.63"
+            android:layout_weight="0.33"
             android:orientation="vertical" >
 
             <TextView
@@ -53,7 +53,7 @@
             android:id="@+id/linearLayout4"
             android:layout_width="wrap_content"
             android:layout_height="fill_parent"
-            android:layout_weight="0.50"
+            android:layout_weight="0.66"
             android:orientation="vertical" >
 
             <TextView
